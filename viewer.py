@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """Create HTML mapfile viewer.
 
-Usage:  viewer.py <mapfile.map> "<scale,scale,scale>" > file.html
-        viewer.py map/example.map "1000,500" > viewer.html		
+Usage:  viewer.py <http://mapserver_url> <mapfile.map> <scale,scale,scale> > file.html
+        viewer.py "http://localhost/cgi-bin/mapserv" "map/example.map" "1000,500" > viewer.html
 """
 
 import sys, os
@@ -142,8 +142,9 @@ def get_html(c):
 if __name__ == "__main__":
 
 	try:
-		mapfile = sys.argv[1]
-		scales = sys.argv[2]
+		mapserver = sys.argv[1]
+		mapfile = sys.argv[2]
+		scales = sys.argv[3]
 	except IndexError:
 		print __doc__
 		sys.exit(1)
@@ -152,7 +153,8 @@ if __name__ == "__main__":
 	mf = mapscript.mapObj(mapfile)
 
 	c = {}
-	c['mapfile'] = os.path.abspath(mapfile) 
+	c['mapfile'] = os.path.abspath(mapfile)
+	c['mapserver'] = mapserver
 	
 	c['units'] = MS_UNITS[mf.units]
 	c['units'] = 'm'
@@ -170,7 +172,7 @@ if __name__ == "__main__":
 	for i in range(0, numlays):
 		c['layers'].append(mf.getLayer(i).name)
 
-	c['wms_url'] = 'http://localhost/cgi-bin/mapserv?map=%s' % c['mapfile']
+	c['wms_url'] = '%s?map=%s' % (c['mapserver'], c['mapfile'])
 
 	# html
 	print get_html(c)
