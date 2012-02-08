@@ -25,56 +25,8 @@ MAP
 			'wms_onlineresource'	'http://localhost/cgi-bin/mapserv?'
 			'wms_srs' 		'epsg:4326'
 		END  
-	END  
-
-	# red
-	LAYER
-		NAME 'red'
-		TYPE CIRCLE
-		FEATURE
-			POINTS
-				50 50
-				80 80
-			END
-		END
-		CLASS
-			STYLE
-				COLOR 255 0 0
-			END
-		END
 	END
 
-	# green
-	LAYER
-		NAME 'green'
-		TYPE CIRCLE
-		FEATURE
-			POINTS
-				50 50
-				80 80
-			END
-		END
-		CLASS
-			STYLE
-				COLOR 0 255 0
-			END
-		END
-	END
-
-	# blue
-	LAYER
-		NAME 'blue'
-		TYPE CIRCLE
-		FEATURE
-			POINTS
-				50 50
-				80 80
-			END
-		END
-		CLASS
-			STYLE
-				COLOR 0 0 255
-			END
-		END
-	END
+	# layers
+	INCLUDE 'layers.map'
 END
