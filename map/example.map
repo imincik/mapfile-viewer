@@ -1,0 +1,80 @@
+MAP
+#	DEBUG 5
+	NAME 'mapfile-viewer'
+	CONFIG 'MS_ERRORFILE' 'stderr'
+	EXTENT 0 0 100 100
+	UNITS METERS
+	SIZE 800 600
+	RESOLUTION 72
+	PROJECTION
+		'init=epsg:4326'
+	END
+	IMAGETYPE 'PNG'
+	
+	OUTPUTFORMAT
+		NAME 'PNG'
+		DRIVER 'AGG/PNG'
+		MIMETYPE 'image/png'
+		IMAGEMODE RGBA
+		EXTENSION 'png'
+	END
+
+	WEB
+		METADATA
+			'wms_title' 		'mapfile-viewer'
+			'wms_onlineresource'	'http://localhost/cgi-bin/mapserv?'
+			'wms_srs' 		'epsg:4326'
+		END  
+	END  
+
+	# red
+	LAYER
+		NAME 'red'
+		TYPE CIRCLE
+		FEATURE
+			POINTS
+				50 50
+				80 80
+			END
+		END
+		CLASS
+			STYLE
+				COLOR 255 0 0
+			END
+		END
+	END
+
+	# green
+	LAYER
+		NAME 'green'
+		TYPE CIRCLE
+		FEATURE
+			POINTS
+				50 50
+				80 80
+			END
+		END
+		CLASS
+			STYLE
+				COLOR 0 255 0
+			END
+		END
+	END
+
+	# blue
+	LAYER
+		NAME 'blue'
+		TYPE CIRCLE
+		FEATURE
+			POINTS
+				50 50
+				80 80
+			END
+		END
+		CLASS
+			STYLE
+				COLOR 0 0 255
+			END
+		END
+	END
+END
