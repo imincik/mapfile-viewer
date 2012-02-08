@@ -10,7 +10,9 @@ import sys, os
 import mapscript
 
 MS_UNITS = {
-	3: 'm', 
+	3: 'm',
+	4: 'mi',
+	6: 'px'
 }
 
 def get_resolutions(scales, units, resolution=96.0):
