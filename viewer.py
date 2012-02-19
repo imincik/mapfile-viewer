@@ -125,7 +125,7 @@ def get_html(c):
 	html = html + """
 	<body onload="init()">
 	<h2>Mapfile viewer</h2>
-		<div id="map" style="width: 1000px; height: 700px; border: 2px solid #222;"></div>
+		<div id="map" style="width: 100%%; height: 700px; border: 2px solid #222;"></div>
 		<p>
 		File: %(mapfile)s <br />
 		Scales: %(scales)s <br />
