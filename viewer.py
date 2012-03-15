@@ -130,6 +130,7 @@ def get_html(c):
 		<p>
 		File: %(mapfile)s <br />
 		Scales: %(scales)s <br />
+		Units: %(units)s <br />
 		Center: %(center_coord1)s, %(center_coord2)s
 		</p>
 	</body>
@@ -158,7 +159,6 @@ if __name__ == "__main__":
 	c['mapserver'] = mapserver
 	
 	c['units'] = MS_UNITS[mf.units]
-	c['units'] = 'm'
 	c['projection'] = mf.web.metadata.get('wms_srs').split(' ')[0]
 	c['extent'] = '%s, %s, %s, %s' % (mf.extent.minx, mf.extent.miny,
 		mf.extent.maxx, mf.extent.maxy)
