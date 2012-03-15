@@ -3,7 +3,7 @@
 """Create HTML mapfile viewer.
 
 Usage:  viewer.py <http://mapserver_url> <mapfile.map> <scale,scale,scale> > file.html
-        viewer.py "http://localhost/cgi-bin/mapserv" "map/example.map" "1000,500" > viewer.html
+        viewer.py "http://localhost/cgi-bin/mapserv" "map/viewer.map" "5000,2000,1000,500" > viewer.html
 """
 
 import sys, os

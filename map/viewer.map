@@ -7,6 +7,10 @@ MAP
 	SIZE 800 600
 	RESOLUTION 96
 
+	SHAPEPATH '../data'
+	SYMBOLSET 'symbols.map'
+	FONTSET 'fonts.map'
+
 	PROJECTION
 		'init=epsg:4326'
 	END
