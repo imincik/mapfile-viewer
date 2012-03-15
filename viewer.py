@@ -86,6 +86,7 @@ def get_html(c):
 
 	# add controls
 	html = html + """
+		OpenLayers.DOTS_PER_INCH=96;
 		var map = new OpenLayers.Map("map", {
 			controls:[
 				new OpenLayers.Control.Navigation(),
