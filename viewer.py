@@ -130,11 +130,9 @@ def get_html(c):
 	<h2>Mapfile viewer</h2>
 		<div id="map" style="width: 100%%; height: 700px; border: 2px solid #222;"></div>
 		<p>
-		File: %(mapfile)s <br />
-		Scales: %(scales)s <br />
-		Units: %(units)s <br />
-		Resolution: %(resolution)s DPI <br />
-		Center: %(center_coord1)s, %(center_coord2)s
+		<strong>file</strong>: %(mapfile)s <br />
+		<strong>scales</strong>: %(scales)s <br />
+		<strong>units</strong>: %(units)s, <strong>resolution</strong>: %(resolution)s DPI, <strong>center</strong>: %(center_coord1)s, %(center_coord2)s <br />
 		</p>
 	</body>
 	</html>
