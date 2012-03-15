@@ -86,7 +86,7 @@ def get_html(c):
 
 	# add controls
 	html = html + """
-		OpenLayers.DOTS_PER_INCH=96;
+		OpenLayers.DOTS_PER_INCH=%(resolution)s;
 		var map = new OpenLayers.Map("map", {
 			controls:[
 				new OpenLayers.Control.Navigation(),
@@ -103,7 +103,7 @@ def get_html(c):
 			resolutions: config.resolutions,
 			maxExtent: new OpenLayers.Bounds(config.maxExtent[0], config.maxExtent[1], config.maxExtent[2], config.maxExtent[3]),
 		});
-	"""
+	""" % c
 
 	# add layers
 	for lay in c['layers']:
@@ -132,6 +132,7 @@ def get_html(c):
 		File: %(mapfile)s <br />
 		Scales: %(scales)s <br />
 		Units: %(units)s <br />
+		Resolution: %(resolution)s DPI <br />
 		Center: %(center_coord1)s, %(center_coord2)s
 		</p>
 	</body>
@@ -160,7 +161,9 @@ if __name__ == "__main__":
 	c['mapserver'] = mapserver
 	
 	c['units'] = MS_UNITS[mf.units]
+	c['resolution'] = int(mf.resolution)
 	c['projection'] = mf.web.metadata.get('wms_srs').split(' ')[0]
+
 	c['extent'] = '%s, %s, %s, %s' % (mf.extent.minx, mf.extent.miny,
 		mf.extent.maxx, mf.extent.maxy)
 	c['center_coord1'] = mf.extent.getCenter().x
