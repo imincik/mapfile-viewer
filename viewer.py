@@ -93,7 +93,8 @@ def get_html(c):
 				new OpenLayers.Control.ScaleLine(),
 				new OpenLayers.Control.MousePosition(),
 				new OpenLayers.Control.LayerSwitcher(),
-				new OpenLayers.Control.Attribution()
+				new OpenLayers.Control.Attribution(),
+				new OpenLayers.Control.Scale()
 			],
 			theme: null,
 			units: config.units,
