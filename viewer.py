@@ -2,8 +2,11 @@
 # -*- coding: utf-8 -*-
 """Create HTML mapfile viewer.
 
-Usage:  viewer.py <http://mapserver_url> <mapfile.map> <scale,scale,scale> > file.html
+Usage:  viewer.py <http://mapserver_url> <mapfile.map> <scale,scale,scale> <layers> > file.html
         viewer.py "http://localhost/cgi-bin/mapserv" "map/viewer.map" "5000,2000,1000,500" > viewer.html
+
+		<layers> parameter is optional. If none specified, layers list will be automatically detected
+		from mapfile.
 """
 
 import sys, os
@@ -171,10 +174,13 @@ if __name__ == "__main__":
 	c['scales'] = scales
 	c['resolutions'] = ', '.join(str(r) for r in get_resolutions(c['scales'].split(','), c['units'], c['resolution']))
 
-	c['layers'] = []
-	numlays = mf.numlayers
-	for i in range(0, numlays):
-		c['layers'].append(mf.getLayer(i).name)
+	try:
+		c['layers'] = sys.argv[4].split(',')
+	except IndexError:
+		c['layers'] = []
+		numlays = mf.numlayers
+		for i in range(0, numlays):
+			c['layers'].append(mf.getLayer(i).name)
 
 	c['wms_url'] = '%s?map=%s' % (c['mapserver'], c['mapfile'])
 
