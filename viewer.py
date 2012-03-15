@@ -15,7 +15,8 @@ MS_UNITS = {
 	6: 'px'
 }
 
-def get_resolutions(scales, units, resolution=96.0):
+def get_resolutions(scales, units, resolution=96):
+	resolution = float(resolution)
 	factor = {'inches': 1.0, 'ft': 12.0, 'mi': 63360.0,
 			'm': 39.3701, 'km': 39370.1, 'dd': 4374754.0}
 	
@@ -170,7 +171,7 @@ if __name__ == "__main__":
 	c['center_coord2'] = mf.extent.getCenter().y
 
 	c['scales'] = scales
-	c['resolutions'] = ', '.join(str(r) for r in get_resolutions(c['scales'].split(','), c['units']))
+	c['resolutions'] = ', '.join(str(r) for r in get_resolutions(c['scales'].split(','), c['units'], c['resolution']))
 
 	c['layers'] = []
 	numlays = mf.numlayers
