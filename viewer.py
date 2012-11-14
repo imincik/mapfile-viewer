@@ -174,10 +174,13 @@ if __name__ == "__main__":
 	c['scales'] = scales
 	c['resolutions'] = ', '.join(str(r) for r in get_resolutions(c['scales'].split(','), c['units'], c['resolution']))
 
+
 	try:
 		c['layers'] = sys.argv[4].split(',')
 	except IndexError:
 		c['layers'] = []
+		c['layers'].append(mf.name) # add all WMS layers
+
 		numlays = mf.numlayers
 		for i in range(0, numlays):
 			c['layers'].append(mf.getLayer(i).name)
@@ -186,7 +189,6 @@ if __name__ == "__main__":
 
 	# html
 	print get_html(c)
-
 
 
 # vim: set ts=4 sts=4 sw=4 noet:
