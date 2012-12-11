@@ -33,6 +33,8 @@ MAP
 		END  
 	END
 
+	MAXSIZE 10000
+
 	# layers
 	INCLUDE 'layers.map'
 END
