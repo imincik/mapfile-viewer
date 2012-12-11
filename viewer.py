@@ -49,6 +49,8 @@ def get_html(c):
 			<title>Mapfile: %(mapfile)s</title>
 			<link rel="stylesheet" type="text/css" href="static/theme/default/style.css" />
 			<link rel="stylesheet" type="text/css" href="static/theme/dark/style.css" />
+			<link rel="stylesheet" type="text/css" href="static/viewer.css" />
+
 			<script type="text/javascript" src="static/OpenLayers.js"></script>
 			<script type="text/javascript">
 	""" % c
