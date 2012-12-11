@@ -3,10 +3,16 @@
 """Create HTML mapfile viewer.
 
 Usage:  viewer.py <http://mapserver_url> <mapfile.map> <scale,scale,scale> <layers> > file.html
-        viewer.py "http://localhost/cgi-bin/mapserv" "map/viewer.map" "5000,2000,1000,500" > viewer.html
 
 		<layers> parameter is optional. If none specified, layers list will be automatically detected
 		from mapfile.
+
+Examples:
+        viewer.py "http://localhost/cgi-bin/mapserv" "map/viewer.map" "5000,2000,1000,500" > viewer.html
+
+		viewer.py "http://localhost/cgi-bin/mapserv?USER=<user>&PASSWORD=<password>&DBNAME=<dbname>&HOST=<host>" \
+				"map/viewer.map" "5000,2000,1000,500" > viewer.html
+
 """
 
 import sys, os
@@ -185,7 +191,10 @@ if __name__ == "__main__":
 		for i in range(0, numlays):
 			c['layers'].append(mf.getLayer(i).name)
 
-	c['wms_url'] = '%s?map=%s' % (c['mapserver'], c['mapfile'])
+	if '?' in c['mapserver']:
+		c['wms_url'] = '%s&map=%s' % (c['mapserver'], c['mapfile'])
+	else:
+		c['wms_url'] = '%s?map=%s' % (c['mapserver'], c['mapfile'])
 
 	# html
 	print get_html(c)
