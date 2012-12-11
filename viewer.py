@@ -46,7 +46,7 @@ def get_html(c):
 		<html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
 			<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-			<title>Mapfile viewer - %(mapfile)s</title>
+			<title>Mapfile: %(mapfile)s</title>
 			<link rel="stylesheet" type="text/css" href="static/theme/default/style.css" />
 			<link rel="stylesheet" type="text/css" href="static/theme/dark/style.css" />
 			<script type="text/javascript" src="static/OpenLayers.js"></script>
@@ -136,10 +136,9 @@ def get_html(c):
 	# body
 	html = html + """
 	<body onload="init()">
-	<h2>Mapfile viewer</h2>
+	<h2>Mapfile: %(mapfile)s</h2>
 		<div id="map" style="width: 100%%; height: 700px; border: 2px solid #222;"></div>
 		<p>
-		<strong>file</strong>: %(mapfile)s <br />
 		<strong>scales</strong>: %(scales)s <br />
 		<strong>units</strong>: %(units)s, <strong>resolution</strong>: %(resolution)s DPI, <strong>center</strong>: %(center_coord1)s, %(center_coord2)s <br />
 		</p>
