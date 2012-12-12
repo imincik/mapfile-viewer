@@ -209,10 +209,17 @@ def server(environ, start_response):
 		qs = dict(parse_qsl(environ['QUERY_STRING']))
 		try:
 			mobj = mapscript.mapObj(qs.get('MAP', qs.get('map')))
+
 		except Exception, err:
 			start_response('500 ERROR', [('Content-type','text/plain')])
 			return err
 
+		# set connection if requested
+		numlays = mobj.numlayers
+		for i in range(0, numlays):
+			mobj.getLayer(i).connection = options.connection
+
+		# prepare OWS request
 		mreq = mapscript.OWSRequest()
 		for k,v in qs.items():
 			mreq.setParameter(k, v)
@@ -248,6 +255,9 @@ if __name__ == "__main__":
 
 	parser.add_option("-l", "--layers", help="comma-separated list of layers to use in map [optional]",
 		dest="layers", action='store', type="string")
+
+	parser.add_option("-c", "--connection", help="connection string to use for all layers [optional]",
+		dest="connection", action='store', type="string")
 
 	parser.add_option("-p", "--port", help="port to run server on [optional]",
 		dest="port", action='store', type="int", default=9991)
