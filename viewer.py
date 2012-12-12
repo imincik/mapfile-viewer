@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-UMN Mapserver mapfile viewer.
+Minimalistic UMN Mapserver mapfile viewer.
+
+Author: Ivan Mincik, ivan.mincik@gmail.com
 """
 
 import sys, os
@@ -14,6 +16,7 @@ MS_UNITS = {
 	4: 'mi',
 	6: 'px'
 }
+
 
 def _get_resolutions(scales, units, resolution=96):
 	resolution = float(resolution)
@@ -28,11 +31,12 @@ def _get_resolutions(scales, units, resolution=96):
 		resolutions.append(monitor_l * int(m))
 	return resolutions
 
-def get_application(c):
+
+def application(c):
 	html = ''
 
 	# head and javascript start
-	html = html + """
+	html += """
 		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 		<html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
@@ -47,7 +51,7 @@ def get_application(c):
 	""" % c
 
 	# config object
-	html = html + """
+	html += """
 		var config = {
 			projection: "%(projection)s",
 			units: "%(units)s",
@@ -63,19 +67,19 @@ def get_application(c):
 	""" % c
 
 	# init function
-	html = html + """
+	html += """
 		function init(){
 	"""
 
 	# automatic map window height setting
-	html = html + """
+	html += """
 		mapwnd = document.getElementById('map');
 		mapwnd.style.height = (document.documentElement.clientHeight - 150) +'px';
 	"""
 
 	# create layer objects
 	for lay in c['layers']:
-		html = html + """
+		html += """
 		var %s = new OpenLayers.Layer.WMS(
 		"%s",
 		["%s"],
@@ -94,7 +98,7 @@ def get_application(c):
 	""" % (lay.replace('-', '_'), lay, c['wms_url'], lay, 'image/png')
 
 	# add controls
-	html = html + """
+	html += """
 		OpenLayers.DOTS_PER_INCH=%(resolution)s;
 		var map = new OpenLayers.Map("map", {
 			controls:[
@@ -116,24 +120,24 @@ def get_application(c):
 
 	# add layers
 	for lay in c['layers']:
-		html = html + """
+		html += """
 		map.addLayer(%s);
 	""" % lay.replace('-', '_')
 
 	# center
-	html = html + """
+	html += """
 		map.setCenter(new OpenLayers.LonLat(x, y), zoom);
 	"""
 
 	# head and javascript end
-	html = html + """
+	html += """
 		}
 	</script>
 	</head>
 	"""
 
 	# body
-	html = html + """
+	html += """
 	<body onload="init()">
 	<h2>Mapfile: %(mapfile)s</h2>
 		<div id="map" style="width: 100%%; border: 2px solid #222;"></div>
@@ -192,7 +196,7 @@ def server(environ, start_response):
 		c['wms_url'] = 'http://127.0.0.1:%s/ows/?map=%s' % (options.port, c['mapfile'])
 
 		start_response('200 OK', [('Content-type','text/html')])
-		return get_application(c)
+		return application(c)
 
 
 	# return static files as css, javascript or images
