@@ -4,7 +4,6 @@ UMN Mapserver mapfile viewer based on OpenLayers libs.
 
 DEPENDENCIES
 ------------
-- cgi-mapserver
 - python-mapscript
 
 CREDITS
