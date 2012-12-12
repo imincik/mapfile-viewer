@@ -42,7 +42,7 @@ def get_application(c):
 			<link rel="stylesheet" type="text/css" href="static/theme/dark/style.css" />
 			<link rel="stylesheet" type="text/css" href="static/viewer.css" />
 
-			<script type="text/javascript" src="static/OpenLayers.js"></script>
+			<script type="text/javascript" src="https://raw.github.com/imincik/mapfile-viewer/wsgiapp/static/OpenLayers.js"></script>
 			<script type="text/javascript">
 	""" % c
 
