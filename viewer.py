@@ -67,6 +67,12 @@ def get_application(c):
 		function init(){
 	"""
 
+	# automatic map window height setting
+	html = html + """
+		mapwnd = document.getElementById('map');
+		mapwnd.style.height = (document.documentElement.clientHeight - 150) +'px';
+	"""
+
 	# create layer objects
 	for lay in c['layers']:
 		html = html + """
@@ -130,7 +136,7 @@ def get_application(c):
 	html = html + """
 	<body onload="init()">
 	<h2>Mapfile: %(mapfile)s</h2>
-		<div id="map" style="width: 100%%; height: 700px; border: 2px solid #222;"></div>
+		<div id="map" style="width: 100%%; border: 2px solid #222;"></div>
 		<p>
 		<strong>scales</strong>: %(scales)s <br />
 		<strong>units</strong>: %(units)s, <strong>resolution</strong>: %(resolution)s DPI, <strong>center</strong>: %(center_coord1)s, %(center_coord2)s <br />
