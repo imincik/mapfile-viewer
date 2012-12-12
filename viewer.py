@@ -163,10 +163,16 @@ def server(environ, start_response):
 		c['resolution'] = int(mf.resolution)
 		c['projection'] = mf.web.metadata.get('wms_srs').split(' ')[0]
 
-		c['extent'] = '%s, %s, %s, %s' % (mf.extent.minx, mf.extent.miny,
-			mf.extent.maxx, mf.extent.maxy)
-		c['center_coord1'] = mf.extent.getCenter().x
-		c['center_coord2'] = mf.extent.getCenter().y
+		if options.extent:
+			c['extent'] = options.extent
+
+			e = c['extent'].split(',')
+			c['center_coord1'] = mapscript.rectObj(float(e[0]), float(e[1]), float(e[2]), float(e[3])).getCenter().x
+			c['center_coord2'] = mapscript.rectObj(float(e[0]), float(e[1]), float(e[2]), float(e[3])).getCenter().y
+		else:
+			c['extent'] = '%s, %s, %s, %s' % (mf.extent.minx, mf.extent.miny, mf.extent.maxx, mf.extent.maxy)
+			c['center_coord1'] = mf.extent.getCenter().x
+			c['center_coord2'] = mf.extent.getCenter().y
 
 		c['scales'] = options.scales
 		c['resolutions'] = ', '.join(str(r) for r in _get_resolutions(c['scales'].split(','), c['units'], c['resolution']))
@@ -214,6 +220,11 @@ def server(environ, start_response):
 			start_response('500 ERROR', [('Content-type','text/plain')])
 			return err
 
+		# set extent if requested
+		if options.extent:
+			e = options.extent.split(',')
+			mobj.extent = mapscript.rectObj(float(e[0]), float(e[1]), float(e[2]), float(e[3]))
+
 		# set connection if requested
 		if options.connection:
 			numlays = mobj.numlayers
@@ -250,6 +261,9 @@ if __name__ == "__main__":
 
 	parser.add_option("-m", "--mapfile", help="mapfile path [required]",
 		dest="mapfile", action='store', type="string")
+
+	parser.add_option("-e", "--extent", help="extent to use in map [optional]",
+		dest="extent", action='store', type="string")
 
 	parser.add_option("-s", "--scales", help="comma-separated list of scales to use in map [optional]",
 		dest="scales", action='store', type="string", default="10000,5000,2000,1000,500")
