@@ -177,7 +177,7 @@ def server(environ, start_response):
 				c['layers'].append(mf.getLayer(i).name)
 
 
-		c['wms_url'] = 'http://localhost:9991/ows/?map=%s' % (c['mapfile'])
+		c['wms_url'] = 'http://127.0.0.1:%s/ows/?map=%s' % (options.port, c['mapfile'])
 
 		start_response('200 OK', [('Content-type','text/html')])
 		return get_application(c)
