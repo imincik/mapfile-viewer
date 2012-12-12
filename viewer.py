@@ -215,9 +215,10 @@ def server(environ, start_response):
 			return err
 
 		# set connection if requested
-		numlays = mobj.numlayers
-		for i in range(0, numlays):
-			mobj.getLayer(i).connection = options.connection
+		if options.connection:
+			numlays = mobj.numlayers
+			for i in range(0, numlays):
+				mobj.getLayer(i).connection = options.connection
 
 		# prepare OWS request
 		mreq = mapscript.OWSRequest()
