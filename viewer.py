@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Minimalistic UMN Mapserver mapfile viewer.
+Minimalistic HTML viewer for UMN MapServer mapfiles.
+
+Example:
+	run $ ./viewer.py -m map/viewer.map
+	and point your browser to 'http://localhost:9991'
 
 Author: Ivan Mincik, ivan.mincik@gmail.com
 """
@@ -254,29 +258,30 @@ def run(port=9991):
 	httpd = simple_server.WSGIServer(('', port), simple_server.WSGIRequestHandler,)
 	httpd.set_app(server)
 	try:
-		print "Listening on port %s." % port
+		print "Starting server. Point your web browser to 'http://127.0.0.1:%s'." % port
 		httpd.serve_forever()
 	except KeyboardInterrupt:
-		print "Shutting down."
+		print "Shutting down server."
 
 
 if __name__ == "__main__":
 	parser = OptionParser()
 
-	parser.add_option("-m", "--mapfile", help="mapfile path [required]",
+	parser.add_option("-m", "--mapfile", help="path to UMN MapServer mapfile [required]",
 		dest="mapfile", action='store', type="string")
 
-	parser.add_option("-e", "--extent", help="extent to use in map [optional]",
+	parser.add_option("-e", "--extent", help="extent (in comma-separated format) to override 'EXTENT' parameter [optional]",
 		dest="extent", action='store', type="string")
+
+	parser.add_option("-l", "--layers", help="comma-separated list of layers to use in map. "
+		"If not used, layer list is automatically detected from mapfile [optional]",
+		dest="layers", action='store', type="string")
+
+	parser.add_option("-c", "--connection", help="string to override 'CONNECTION' parameter of all layers [optional]",
+		dest="connection", action='store', type="string")
 
 	parser.add_option("-s", "--scales", help="comma-separated list of scales to use in map [optional]",
 		dest="scales", action='store', type="string", default="10000,5000,2000,1000,500")
-
-	parser.add_option("-l", "--layers", help="comma-separated list of layers to use in map [optional]",
-		dest="layers", action='store', type="string")
-
-	parser.add_option("-c", "--connection", help="connection string to use for all layers [optional]",
-		dest="connection", action='store', type="string")
 
 	parser.add_option("-p", "--port", help="port to run server on [optional]",
 		dest="port", action='store', type="int", default=9991)

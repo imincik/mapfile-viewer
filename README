@@ -1,14 +1,20 @@
-UMN Mapserver mapfile viewer
-============================
-UMN Mapserver mapfile viewer based on OpenLayers libs.
+Minimalistic HTML viewer for UMN MapServer mapfiles
+====================================================
+Simple standalone WSGI server providing OpenLayers map viewer
+containing layers served from UMN MapServer mapfile.
+
+To get help run '$ ./viewer.py' without any arguments.
+
 
 DEPENDENCIES
 ------------
 - python-mapscript
 
+
 CREDITS
 -------
-OpenLayers Dark theme - Development Seed, Inc.
+- OpenLayers Dark theme - Development Seed, Inc.
+
 
 LICENSE
 -------
