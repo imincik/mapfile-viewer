@@ -54,6 +54,7 @@ def application(c):
 			<link rel="stylesheet" type="text/css" href="static/theme/dark/style.css" />
 			<link rel="stylesheet" type="text/css" href="static/viewer.css" />
 
+			<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 			<script type="text/javascript" src="https://raw.github.com/imincik/mapfile-viewer/wsgiapp/static/OpenLayers.js"></script>
 			<script type="text/javascript">
 	""" % c
@@ -76,13 +77,13 @@ def application(c):
 
 	# init function
 	html += """
-		function init(){
+		$(document).ready(function(){
 	"""
 
 	# automatic map window height setting
 	html += """
-		mapwnd = document.getElementById('map');
-		mapwnd.style.height = (document.documentElement.clientHeight - 150) +'px';
+		$("#map").height($(window).height() - 150);
+		$("#legend").height($(window).height() - 150);
 	"""
 
 	# create layer objects
@@ -103,7 +104,7 @@ def application(c):
 		}
 	);
 
-	""" % (lay.replace('-', '_'), lay, c['wms_url'], lay, 'image/png')
+	""" % (lay.replace('-', '_'), lay, c['ows_url'], lay, 'image/png')
 
 	# add controls
 	html += """
@@ -139,20 +140,28 @@ def application(c):
 
 	# head and javascript end
 	html += """
-		}
+		});
 	</script>
 	</head>
 	"""
 
 	# body
 	html += """
-	<body onload="init()">
+	<body>
 	<h2>Mapfile: %(mapfile)s</h2>
-		<div id="map" style="width: 100%%; border: 2px solid #222;"></div>
-		<p>
-		<strong>scales</strong>: %(scales)s <br />
-		<strong>units</strong>: %(units)s, <strong>resolution</strong>: %(resolution)s DPI, <strong>center</strong>: %(center_coord1)s, %(center_coord2)s <br />
-		</p>
+		<div id="container">
+		<div id="map"></div>
+
+		<div id="legend">
+			<img src="%(ows_url)s&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&LAYERS=%(root_layer)s&SRS=%(projection)s&BBOX=%(extent)s&FORMAT=image/png&HEIGHT=10&WIDTH=10" alt="legend">
+		</div>
+
+		<div id="info">
+			<strong>scales</strong>: %(scales)s <br />
+			<strong>projection</strong>: %(projection)s, <strong>units</strong>: %(units)s, <strong>resolution</strong>: %(resolution)s DPI,
+			<strong>center</strong>: %(center_coord1)s, %(center_coord2)s
+		</div>
+		</div>
 	</body>
 	</html>
 	""" % c
@@ -165,9 +174,9 @@ def server(environ, start_response):
 
 	# return HTML application
 	if req[1] == '':
-		# collect configuration values from mapfile
 		mf = mapscript.mapObj(options.mapfile)
 
+		# collect configuration values from mapfile
 		c = {}
 		c['mapfile'] = os.path.abspath(options.mapfile)
 		
@@ -193,19 +202,17 @@ def server(environ, start_response):
 		c['scales'] = options.scales
 		c['resolutions'] = ', '.join(str(r) for r in _get_resolutions(c['scales'].split(','), c['units'], c['resolution']))
 
+		c['root_layer'] = mf.name
 
 		if options.layers:
 			c['layers'] = options.layers.split(',')
 		else:
-			c['layers'] = []
-			c['layers'].append(mf.name) # add all WMS layers
-
+			c['layers'] = [mf.name, ]
 			numlays = mf.numlayers
 			for i in range(0, numlays):
 				c['layers'].append(mf.getLayer(i).name)
 
-
-		c['wms_url'] = 'http://127.0.0.1:%s/ows/?map=%s' % (options.port, c['mapfile'])
+		c['ows_url'] = 'http://127.0.0.1:%s/ows/?map=%s' % (options.port, c['mapfile'])
 
 		start_response('200 OK', [('Content-type','text/html')])
 		return application(c)
@@ -253,8 +260,12 @@ def server(environ, start_response):
 			mreq.setParameter(k, v)
 		mobj.loadOWSParameters(mreq)
 
-		start_response('200 OK', [('Content-type','image/png')])
-		return mobj.draw().getBytes()
+		start_response('200 OK', [('Content-type', qs["FORMAT"])])
+		
+		if qs["REQUEST"].upper() == 'GETMAP':
+			return mobj.draw().getBytes()
+		elif qs["REQUEST"].upper() == 'GETLEGENDGRAPHIC':
+			return mobj.drawLegend().getBytes()
 
 	else:
 		start_response('500 ERROR', [('Content-type','text/plain')])

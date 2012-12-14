@@ -1,3 +1,31 @@
 .olControlLayerSwitcher {
-	width: 50em;
+	width: 30em;
+}
+
+#container {
+	margin: 1%;
+	padding: 0;
+	width: 97%;
+}
+
+#map, #legend {
+	padding: 1%;
+	border: 1px solid #222;
+}
+
+#map {
+	float: left;
+	width: 70%;
+}
+
+#legend {
+	float: right;
+	width: 25%;
+}
+
+#info {
+	position: absolute;
+	bottom: 2%;
+	left: 1%;
+	font-size: small;
 }
