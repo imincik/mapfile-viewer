@@ -16,15 +16,19 @@ from cgi import parse_qsl
 import mapscript
 
 MS_UNITS = {
+	0: 'in',
+	1: 'ft',
+	2: 'mi',
 	3: 'm',
-	4: 'mi',
+	4: 'km',
+	5: 'dd',
 	6: 'px'
 }
 
 
 def _get_resolutions(scales, units, resolution=96):
 	resolution = float(resolution)
-	factor = {'inches': 1.0, 'ft': 12.0, 'mi': 63360.0,
+	factor = {'in': 1.0, 'ft': 12.0, 'mi': 63360.0,
 			'm': 39.3701, 'km': 39370.1, 'dd': 4374754.0}
 	
 	inches = 1.0 / resolution
