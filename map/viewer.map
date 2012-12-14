@@ -28,7 +28,6 @@ MAP
 		METADATA
 			'wms_title' 		'mapfile-viewer'
 			'wms_onlineresource'	'http://localhost/cgi-bin/mapserv?'
-			'wms_srs' 		'epsg:4326'
 			'ows_enable_request'    '*'
 		END  
 	END

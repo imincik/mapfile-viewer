@@ -169,7 +169,11 @@ def server(environ, start_response):
 		
 		c['units'] = MS_UNITS[mf.units]
 		c['resolution'] = int(mf.resolution)
-		c['projection'] = mf.web.metadata.get('wms_srs').split(' ')[0]
+
+		try:
+			c['projection'] = mf.getProjection().split('=')[1]
+		except IndexError:
+			c['projection'] = 'epsg:4326'
 
 		if options.extent:
 			c['extent'] = options.extent
