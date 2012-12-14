@@ -55,7 +55,7 @@ def application(c):
 			<link rel="stylesheet" type="text/css" href="static/viewer.css" />
 
 			<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-			<script type="text/javascript" src="https://raw.github.com/imincik/mapfile-viewer/wsgiapp/static/OpenLayers.js"></script>
+			<script type="text/javascript" src="https://raw.github.com/imincik/mapfile-viewer/master/static/OpenLayers-2.12.js"></script>
 			<script type="text/javascript">
 	""" % c
 
