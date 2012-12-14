@@ -153,7 +153,7 @@ def application(c):
 		<div id="map"></div>
 
 		<div id="legend">
-			<img src="%(ows_url)s&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetLegendGraphic&LAYERS=%(root_layer)s&SRS=%(projection)s&BBOX=%(extent)s&FORMAT=image/png&HEIGHT=10&WIDTH=10" alt="legend">
+			<img src="%(ows_url)s&amp;SERVICE=WMS&amp;VERSION=1.1.1&amp;REQUEST=GetLegendGraphic&amp;LAYERS=%(root_layer)s&amp;SRS=%(projection)s&amp;BBOX=%(extent)s&amp;FORMAT=image/png&amp;HEIGHT=10&amp;WIDTH=10" alt="legend" />
 		</div>
 
 		<div id="info">
