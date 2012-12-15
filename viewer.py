@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Minimalistic HTML viewer for UMN MapServer mapfiles.
+MAPFILE DEVELOPER SCRIPT.
+Minimalistic HTML viewer for UMN MapServer mapfiles in simple
+standalone WSGI server.
 
 Example:
 	run $ ./viewer.py -m map/viewer.map
