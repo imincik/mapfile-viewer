@@ -140,6 +140,21 @@ def application(c):
 		map.setCenter(new OpenLayers.LonLat(x, y), zoom);
 	"""
 
+	# loading legend on start and changing on layer change
+	html += """
+		function loadLegend(){
+			$("#legendimg").attr("src", "%(ows_url)s&amp;SERVICE=WMS&amp;VERSION=1.1.1&amp;REQUEST=GetLegendGraphic&amp;LAYERS="
+			+ map.baseLayer.name +
+			"&amp;SRS=%(projection)s&amp;BBOX=%(extent)s&amp;FORMAT=image/png&amp;HEIGHT=10&amp;WIDTH=10");
+		}
+
+		map.events.register('changebaselayer', map, function (e) {
+			loadLegend();
+		});
+
+		loadLegend();
+	""" % c
+
 	# head and javascript end
 	html += """
 		});
@@ -155,7 +170,7 @@ def application(c):
 		<div id="map"></div>
 
 		<div id="legend">
-			<img src="%(ows_url)s&amp;SERVICE=WMS&amp;VERSION=1.1.1&amp;REQUEST=GetLegendGraphic&amp;LAYERS=%(root_layer)s&amp;SRS=%(projection)s&amp;BBOX=%(extent)s&amp;FORMAT=image/png&amp;HEIGHT=10&amp;WIDTH=10" alt="legend" />
+			<img id="legendimg" src="" alt="legend" />
 		</div>
 
 		<div id="info">
