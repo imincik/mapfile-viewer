@@ -1,9 +1,27 @@
 Minimalistic HTML viewer for UMN MapServer mapfiles
 ====================================================
-Simple standalone WSGI server providing OpenLayers map viewer
+Simple standalone WSGI server providing OpenLayers viewer
 containing layers served from UMN MapServer mapfile.
 
 To get help run '$ ./viewer.py' without any arguments.
+
+
+DIFFERENCES (ADVANTAGES) TO MAPSERVER 6 BUILT-IN VIEWER
+-------------------------------------------------------
+- Works for MapServer < 6.0
+
+- Doesn't require web server running on Your machine. It creates its
+own WSGI server which is more like a development environments should look
+like (Django dev server).
+
+- Usable debug messages in console
+
+- Possibilities to override CONNECTION setting - in production one can use
+different credentials than in development.
+
+- Possibility to override some other parameters line EXTENT. It creates
+possibility to work with many projects with the same base mapfile. More
+overriding options to come.
 
 
 DEPENDENCIES
