@@ -1,5 +1,5 @@
 MAP
-#	DEBUG 5
+	DEBUG 5
 	NAME 'mapfile-viewer'
 	CONFIG 'MS_ERRORFILE' 'stderr'
 	EXTENT 0 0 120 120
