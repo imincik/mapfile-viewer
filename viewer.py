@@ -322,6 +322,9 @@ if __name__ == "__main__":
 	parser.add_option("-p", "--port", help="port to run server on [optional]",
 		dest="port", action='store', type="int", default=9991)
 
+	parser.add_option("-t", "--test", help="check mapfile syntax and exit [optional]",
+		dest="test", action='store_true', default=False)
+
 	(options, args) = parser.parse_args()
 
 	if not options.mapfile:
@@ -329,7 +332,20 @@ if __name__ == "__main__":
 		parser.print_help()
 		sys.exit(0)
 
-	run(options.port)
+	# test mapfile only
+	if options.test:
+		try:
+			print 'Checking mapfile.'
+			m = mapscript.mapObj(options.mapfile)
+			print 'OK, %s layers found.' % m.numlayers
+			sys.exit(0)
+		except Exception, err:
+			print 'ERROR: %s' % err
+			sys.exit(0)
+
+	# run server
+	else:
+		run(options.port)
 
 
 # vim: set ts=4 sts=4 sw=4 noet:
