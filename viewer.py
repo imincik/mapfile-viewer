@@ -29,6 +29,8 @@ MS_UNITS = {
 
 
 def _get_resolutions(scales, units, resolution=96):
+	"""Helper function to compute OpenLayers resolutions."""
+
 	resolution = float(resolution)
 	factor = {'in': 1.0, 'ft': 12.0, 'mi': 63360.0,
 			'm': 39.3701, 'km': 39370.1, 'dd': 4374754.0}
@@ -43,6 +45,8 @@ def _get_resolutions(scales, units, resolution=96):
 
 
 def application(c):
+	"""Return OpenLayers viewer application HTML code."""
+
 	html = ''
 
 	# head and javascript start
@@ -187,21 +191,23 @@ def application(c):
 
 
 def server(environ, start_response):
+	"""Return server response."""
+
 	req = environ['PATH_INFO'].split('/')
 
 	# return HTML application
 	if req[1] == '':
-		mf = mapscript.mapObj(options.mapfile)
+		m = mapscript.mapObj(options.mapfile)
 
 		# collect configuration values from mapfile
 		c = {}
 		c['mapfile'] = os.path.abspath(options.mapfile)
 		
-		c['units'] = MS_UNITS[mf.units]
-		c['resolution'] = int(mf.resolution)
+		c['units'] = MS_UNITS[m.units]
+		c['resolution'] = int(m.resolution)
 
 		try:
-			c['projection'] = mf.getProjection().split('=')[1]
+			c['projection'] = m.getProjection().split('=')[1]
 		except IndexError:
 			c['projection'] = 'epsg:4326'
 
@@ -212,22 +218,22 @@ def server(environ, start_response):
 			c['center_coord1'] = mapscript.rectObj(float(e[0]), float(e[1]), float(e[2]), float(e[3])).getCenter().x
 			c['center_coord2'] = mapscript.rectObj(float(e[0]), float(e[1]), float(e[2]), float(e[3])).getCenter().y
 		else:
-			c['extent'] = '%s, %s, %s, %s' % (mf.extent.minx, mf.extent.miny, mf.extent.maxx, mf.extent.maxy)
-			c['center_coord1'] = mf.extent.getCenter().x
-			c['center_coord2'] = mf.extent.getCenter().y
+			c['extent'] = '%s, %s, %s, %s' % (m.extent.minx, m.extent.miny, m.extent.maxx, m.extent.maxy)
+			c['center_coord1'] = m.extent.getCenter().x
+			c['center_coord2'] = m.extent.getCenter().y
 
 		c['scales'] = options.scales
 		c['resolutions'] = ', '.join(str(r) for r in _get_resolutions(c['scales'].split(','), c['units'], c['resolution']))
 
-		c['root_layer'] = mf.name
+		c['root_layer'] = m.name
 
 		if options.layers:
 			c['layers'] = options.layers.split(',')
 		else:
-			c['layers'] = [mf.name, ]
-			numlays = mf.numlayers
+			c['layers'] = [m.name, ]
+			numlays = m.numlayers
 			for i in range(0, numlays):
-				c['layers'].append(mf.getLayer(i).name)
+				c['layers'].append(m.getLayer(i).name)
 
 		c['ows_url'] = 'http://127.0.0.1:%s/ows/?map=%s' % (options.port, c['mapfile'])
 
@@ -254,7 +260,7 @@ def server(environ, start_response):
 	elif req[1] == 'ows':
 		qs = dict(parse_qsl(environ['QUERY_STRING']))
 		try:
-			mobj = mapscript.mapObj(qs.get('MAP', qs.get('map')))
+			m = mapscript.mapObj(qs.get('MAP', qs.get('map')))
 
 		except Exception, err:
 			start_response('500 ERROR', [('Content-type','text/plain')])
@@ -263,26 +269,26 @@ def server(environ, start_response):
 		# set extent if requested
 		if options.extent:
 			e = options.extent.split(',')
-			mobj.extent = mapscript.rectObj(float(e[0]), float(e[1]), float(e[2]), float(e[3]))
+			m.extent = mapscript.rectObj(float(e[0]), float(e[1]), float(e[2]), float(e[3]))
 
 		# set connection if requested
 		if options.connection:
-			numlays = mobj.numlayers
+			numlays = m.numlayers
 			for i in range(0, numlays):
-				mobj.getLayer(i).connection = options.connection
+				m.getLayer(i).connection = options.connection
 
 		# prepare OWS request
 		mreq = mapscript.OWSRequest()
 		for k,v in qs.items():
 			mreq.setParameter(k, v)
-		mobj.loadOWSParameters(mreq)
+		m.loadOWSParameters(mreq)
 
 		start_response('200 OK', [('Content-type', qs["FORMAT"])])
 		
 		if qs["REQUEST"].upper() == 'GETMAP':
-			return mobj.draw().getBytes()
+			return m.draw().getBytes()
 		elif qs["REQUEST"].upper() == 'GETLEGENDGRAPHIC':
-			return mobj.drawLegend().getBytes()
+			return m.drawLegend().getBytes()
 
 	else:
 		start_response('500 ERROR', [('Content-type','text/plain')])
@@ -290,6 +296,8 @@ def server(environ, start_response):
 
 
 def run(port=9991):
+	"""Start WSGI server."""
+
 	from wsgiref import simple_server
 	httpd = simple_server.WSGIServer(('', port), simple_server.WSGIRequestHandler,)
 	httpd.set_app(server)
@@ -306,7 +314,8 @@ if __name__ == "__main__":
 	parser.add_option("-m", "--mapfile", help="path to UMN MapServer mapfile [required]",
 		dest="mapfile", action='store', type="string")
 
-	parser.add_option("-e", "--extent", help="extent (in comma-separated format) to override 'EXTENT' parameter [optional]",
+	parser.add_option("-e", "--extent", help="extent (in comma-separated format) to override"
+		" 'EXTENT' parameter [optional]",
 		dest="extent", action='store', type="string")
 
 	parser.add_option("-l", "--layers", help="comma-separated list of layers to use in map. "
