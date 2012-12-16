@@ -23,6 +23,8 @@ different credentials than in development.
 possibility to work with many projects with the same base mapfile. More
 overriding options to come.
 
+* Simple mapfile syntax check tool.
+
 
 DEPENDENCIES
 ------------
