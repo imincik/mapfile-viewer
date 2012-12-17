@@ -44,6 +44,45 @@ def _get_resolutions(scales, units, resolution=96):
 	return resolutions
 
 
+def _concatenate_mapfiles(mapfiles):
+	"""Concatenate mapfiles and return resulting file path."""
+
+	outfiledir = os.path.abspath(os.path.dirname(mapfiles[0]))
+	outfilename = ''
+
+	outdata = 'MAP\n'
+
+	for f in mapfiles:
+		outdata += open(f).read()
+		outfilename += '_' + os.path.splitext(os.path.basename(f))[0]
+
+	outdata += '\nEND'
+
+	outfilepath = os.path.join(outfiledir, outfilename + '.map')
+
+	outfile = open(outfilepath, 'w')
+	outfile.write(outdata)
+	outfile.close()
+
+	return outfilepath
+
+
+def test_mapfile(mapfile):
+	"""Test mapfile syntax, print result and exit script."""
+
+	try:
+		print 'Checking mapfile.'
+		m = mapscript.mapObj(mapfile)
+		print 'OK, %s layers found.' % m.numlayers
+	except Exception, err:
+		print 'ERROR: %s' % err
+
+	if options.concatenate:
+		os.remove(mapfile)
+
+	sys.exit(0)
+
+
 def application(c):
 	"""Return OpenLayers viewer application HTML code."""
 
@@ -197,11 +236,11 @@ def server(environ, start_response):
 
 	# return HTML application
 	if req[1] == '':
-		m = mapscript.mapObj(options.mapfile)
 
 		# collect configuration values from mapfile
 		c = {}
 		c['mapfile'] = os.path.abspath(options.mapfile)
+		m = mapscript.mapObj(c['mapfile'])
 		
 		c['units'] = MS_UNITS[m.units]
 		c['resolution'] = int(m.resolution)
@@ -305,17 +344,23 @@ def run(port=9991):
 		print "Starting server. Point your web browser to 'http://127.0.0.1:%s'." % port
 		httpd.serve_forever()
 	except KeyboardInterrupt:
-		print "Shutting down server."
+		if options.concatenate:
+			os.remove(options.mapfile)
 
+		print "Shutting down server."
+		sys.exit(0)
 
 if __name__ == "__main__":
 	parser = OptionParser()
 
-	parser.add_option("-m", "--mapfile", help="path to UMN MapServer mapfile [required]",
+	parser.add_option("-m", "--mapfile", help="path to UMN MapServer mapfile OR "
+		"comma-separated list of mapfiles to concatenate on-the-fly. None of the "
+		"mapfiles must not contain main 'MAP' keyword and coresponding 'END' key. "
+		"Example: 'map/base.map,map/layers.map' [required]",
 		dest="mapfile", action='store', type="string")
 
-	parser.add_option("-e", "--extent", help="extent (in comma-separated format) to override"
-		" 'EXTENT' parameter [optional]",
+	parser.add_option("-e", "--extent", help="extent in comma-separated format to override "
+		"'EXTENT' parameter [optional]",
 		dest="extent", action='store', type="string")
 
 	parser.add_option("-l", "--layers", help="comma-separated list of layers to use in map. "
@@ -336,21 +381,23 @@ if __name__ == "__main__":
 
 	(options, args) = parser.parse_args()
 
+
+	# mapfile option is required. Exit if not given.
 	if not options.mapfile:
 		print __doc__
 		parser.print_help()
 		sys.exit(0)
 
+	# concatenate mapfiles if multiple files given
+	options.concatenate = False
+	if len(options.mapfile.split(',')) > 1:
+		options.mapfile = _concatenate_mapfiles(options.mapfile.split(','))
+		options.concatenate = True
+
+
 	# test mapfile only
 	if options.test:
-		try:
-			print 'Checking mapfile.'
-			m = mapscript.mapObj(options.mapfile)
-			print 'OK, %s layers found.' % m.numlayers
-			sys.exit(0)
-		except Exception, err:
-			print 'ERROR: %s' % err
-			sys.exit(0)
+		test_mapfile(options.mapfile)
 
 	# run server
 	else:

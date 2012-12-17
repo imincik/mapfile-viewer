@@ -1,0 +1,37 @@
+#MAP - must be removed when using mapfile concatenation feature
+	DEBUG 5
+	NAME 'mapfile-viewer'
+	CONFIG 'MS_ERRORFILE' 'stderr'
+	EXTENT 0 0 120 120
+	UNITS METERS
+	SIZE 800 600
+	RESOLUTION 96
+	DEFRESOLUTION 96
+
+	SHAPEPATH '../data'
+	SYMBOLSET 'symbols.map'
+	FONTSET 'fonts.map'
+
+	PROJECTION
+		'init=epsg:4326'
+	END
+	IMAGETYPE 'PNG'
+	
+	OUTPUTFORMAT
+		NAME 'PNG'
+		DRIVER 'AGG/PNG'
+		MIMETYPE 'image/png'
+		IMAGEMODE RGBA
+		EXTENSION 'png'
+	END
+
+	WEB
+		METADATA
+			'wms_title' 		'mapfile-viewer'
+			'wms_onlineresource'	'http://localhost/cgi-bin/mapserv?'
+			'ows_enable_request'    '*'
+		END  
+	END
+
+	MAXSIZE 10000
+#END - must be removed when using mapfile concatenation feature
