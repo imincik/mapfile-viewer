@@ -142,7 +142,7 @@ def application(c):
 			format: "%s",
 		},
 		{
-			isBaseLayer: true,
+			isBaseLayer: false,
 			visibility: true,
 			singleTile: true,
 			// attribution: "",
@@ -172,6 +172,16 @@ def application(c):
 		});
 	""" % c
 
+	html += """
+		var baseLayerWhite = new OpenLayers.Layer.Image("White Background",
+			'static/white.png',
+			map.maxExtent,
+			new OpenLayers.Size(1, 1)
+		);
+
+		map.addLayer(baseLayerWhite);
+	"""
+
 	# add layers
 	for lay in c['layers']:
 		html += """
@@ -183,15 +193,31 @@ def application(c):
 		map.setCenter(new OpenLayers.LonLat(x, y), zoom);
 	"""
 
-	# loading legend on start and changing on layer change
+	# legend loading
 	html += """
 		function loadLegend(){
-			$("#legendimg").attr("src", "%(ows_url)s&amp;SERVICE=WMS&amp;VERSION=1.1.1&amp;REQUEST=GetLegendGraphic&amp;LAYERS="
-			+ map.baseLayer.name +
-			"&amp;SRS=%(projection)s&amp;BBOX=%(extent)s&amp;FORMAT=image/png&amp;HEIGHT=10&amp;WIDTH=10");
+
+			var layers = map.getLayersBy("visibility", true);
+			var overlayLayers = [];
+
+			for (var i=0, len=layers.length; i<len;i++) {
+				if (layers[i].isBaseLayer === false) {
+					overlayLayers.push(layers[i].name);
+				}
+			}
+
+			if (overlayLayers.length > 0) {
+				$("#legendimg").attr("src", "%(ows_url)s&amp;SERVICE=WMS&amp;VERSION=1.1.1&amp;REQUEST=GetLegendGraphic&amp;LAYERS="
+				+ overlayLayers.join(',') +
+				"&amp;SRS=%(projection)s&amp;BBOX=%(extent)s&amp;FORMAT=image/png&amp;HEIGHT=10&amp;WIDTH=10");
+			}
+
+			else {
+				$("#legendimg").attr("src", "static/white.png");
+			}
 		}
 
-		map.events.register('changebaselayer', map, function (e) {
+		map.events.register('changelayer', map, function (e) {
 			loadLegend();
 		});
 
@@ -213,7 +239,7 @@ def application(c):
 		<div id="map"></div>
 
 		<div id="legend">
-			<img id="legendimg" src="" alt="legend" />
+			<img id="legendimg" src="static/white.png" alt="legend" />
 		</div>
 
 		<div id="info">
@@ -269,7 +295,7 @@ def server(environ, start_response):
 		if options.layers:
 			c['layers'] = options.layers.split(',')
 		else:
-			c['layers'] = [m.name, ]
+			c['layers'] = []
 			numlays = m.numlayers
 			for i in range(0, numlays):
 				c['layers'].append(m.getLayer(i).name)
