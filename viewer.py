@@ -44,41 +44,48 @@ def _get_resolutions(scales, units, resolution=96):
 	return resolutions
 
 
-def _concatenate_mapfiles(mapfiles):
-	"""Concatenate mapfiles and return resulting file path."""
+def _mapfile():
+	""" Create concatenated mapfile if needed and return mapfile absolute path. """
 
-	outfiledir = os.path.abspath(os.path.dirname(mapfiles[0]))
-	outfilename = ''
+	print 'I: preparing mapfile.'
 
-	outdata = 'MAP\n'
+	if options.concatenate:
+		mapfiles = options.mapfile.split(',')
+		outfiledir = os.path.abspath(os.path.dirname(mapfiles[0]))
+		outfilename = ''
 
-	for f in mapfiles:
-		outdata += open(f).read()
-		outfilename += '_' + os.path.splitext(os.path.basename(f))[0]
+		outdata = 'MAP\n'
 
-	outdata += '\nEND'
+		for f in mapfiles:
+			outdata += open(f).read()
+			outfilename += '_' + os.path.splitext(os.path.basename(f))[0]
 
-	outfilepath = os.path.join(outfiledir, outfilename + '.map')
+		outdata += '\nEND'
 
-	outfile = open(outfilepath, 'w')
-	outfile.write(outdata)
-	outfile.close()
+		concatmapfile = os.path.join(outfiledir, outfilename + '.map')
 
-	return outfilepath
+		outfile = open(concatmapfile, 'w')
+		outfile.write(outdata)
+		outfile.close()
+
+		options.concatmapfile = concatmapfile
+		return concatmapfile
+
+	else:
+		return os.path.abspath(options.mapfile)
 
 
-def test_mapfile(mapfile):
+def test_mapfile():
 	"""Test mapfile syntax, print result and exit script."""
 
 	try:
 		print 'Checking mapfile.'
-		m = mapscript.mapObj(mapfile)
+		m = mapscript.mapObj(_mapfile())
 		print 'OK, %s layers found.' % m.numlayers
 	except Exception, err:
 		print 'ERROR: %s' % err
 
-	if options.concatenate:
-		os.remove(mapfile)
+	if options.concatenate: os.remove(options.concatmapfile)
 
 	sys.exit(0)
 
@@ -239,7 +246,7 @@ def server(environ, start_response):
 
 		# collect configuration values from mapfile
 		c = {}
-		c['mapfile'] = os.path.abspath(options.mapfile)
+		c['mapfile'] = _mapfile()
 		m = mapscript.mapObj(c['mapfile'])
 		
 		c['units'] = MS_UNITS[m.units]
@@ -297,6 +304,9 @@ def server(environ, start_response):
 
 	# return map image
 	elif req[1] == 'ows':
+
+		if options.concatenate: _mapfile()	# refresh mapfile if concatenated
+
 		qs = dict(parse_qsl(environ['QUERY_STRING']))
 		try:
 			m = mapscript.mapObj(qs.get('MAP', qs.get('map')))
@@ -344,9 +354,7 @@ def run(port=9991):
 		print "Starting server. Point your web browser to 'http://127.0.0.1:%s'." % port
 		httpd.serve_forever()
 	except KeyboardInterrupt:
-		if options.concatenate:
-			os.remove(options.mapfile)
-
+		if options.concatenate: os.remove(options.concatmapfile)
 		print "Shutting down server."
 		sys.exit(0)
 
@@ -388,16 +396,14 @@ if __name__ == "__main__":
 		parser.print_help()
 		sys.exit(0)
 
-	# concatenate mapfiles if multiple files given
+	# test if mapfile should be concatenated
 	options.concatenate = False
 	if len(options.mapfile.split(',')) > 1:
-		options.mapfile = _concatenate_mapfiles(options.mapfile.split(','))
 		options.concatenate = True
-
 
 	# test mapfile only
 	if options.test:
-		test_mapfile(options.mapfile)
+		test_mapfile()
 
 	# run server
 	else:
