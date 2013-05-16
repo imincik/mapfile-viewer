@@ -13,6 +13,7 @@ Author: Ivan Mincik, ivan.mincik@gmail.com
 """
 
 import sys, os
+import re
 from optparse import OptionParser
 from cgi import parse_qsl
 import mapscript
@@ -315,16 +316,25 @@ def server(environ, start_response):
 			start_response('500 ERROR', [('Content-type','text/plain')])
 			return err
 
-		# set extent if requested
+		# override EXTENT if requested
 		if options.extent:
 			e = options.extent.split(',')
 			m.extent = mapscript.rectObj(float(e[0]), float(e[1]), float(e[2]), float(e[3]))
+			print "I: EXTENT changed to '%s'" % (m.extent)
 
-		# set connection if requested
+		numlays = m.numlayers
+
+		# override CONNECTION if requested
 		if options.connection:
-			numlays = m.numlayers
 			for i in range(0, numlays):
 				m.getLayer(i).connection = options.connection
+				print "I: CONNECTION in '%s' changed to '%s'" % (m.getLayer(i).name, m.getLayer(i).connection)
+
+		# override DATA by regular expression if requested
+		if options.rdata:
+			for i in range(0, numlays):
+				m.getLayer(i).data = re.sub(options.rdata[0], options.rdata[1], m.getLayer(i).data)
+				print "I: DATA in '%s' changed to '%s'" % (m.getLayer(i).name, m.getLayer(i).data)
 
 		# prepare OWS request
 		mreq = mapscript.OWSRequest()
@@ -363,7 +373,7 @@ if __name__ == "__main__":
 
 	parser.add_option("-m", "--mapfile", help="path to UMN MapServer mapfile OR "
 		"comma-separated list of mapfiles to concatenate on-the-fly. None of the "
-		"mapfiles must not contain main 'MAP' keyword and coresponding 'END' key. "
+		"mapfiles must not contain main 'MAP' keyword and corresponding 'END' key. "
 		"Example: 'map/base.map,map/layers.map' [required]",
 		dest="mapfile", action='store', type="string")
 
@@ -377,6 +387,11 @@ if __name__ == "__main__":
 
 	parser.add_option("-c", "--connection", help="string to override 'CONNECTION' parameter of all layers [optional]",
 		dest="connection", action='store', type="string")
+
+	parser.add_option("--rdata", help="regular expression pattern and replacement string to override "
+			"'DATA' parameter of all layers. Example: --rdata 'FROM (.)*\.' 'FROM myschema.' will "
+			"replace any database schema to 'myschema' [optional]",
+		dest="rdata", action='store', type="string", nargs=2)
 
 	parser.add_option("-s", "--scales", help="comma-separated list of scales to use in map [optional]",
 		dest="scales", action='store', type="string", default="10000,5000,2000,1000,500")
