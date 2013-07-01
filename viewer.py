@@ -374,23 +374,27 @@ if __name__ == "__main__":
 	parser.add_option("-m", "--mapfile", help="path to UMN MapServer mapfile OR "
 		"comma-separated list of mapfiles to concatenate on-the-fly. None of the "
 		"mapfiles must not contain main 'MAP' keyword and corresponding 'END' key. "
-		"Example: 'map/base.map,map/layers.map' [required]",
+		"Example: 'map/mapfile.map' OR 'map/base.map,map/layers.map' [required]",
 		dest="mapfile", action='store', type="string")
 
 	parser.add_option("-e", "--extent", help="extent in comma-separated format to override "
-		"'EXTENT' parameter [optional]",
+		"'EXTENT' parameter. "
+		"Format: '<minx>,<miny>,<maxx>,<maxy>' [optional]",
 		dest="extent", action='store', type="string")
 
 	parser.add_option("-l", "--layers", help="comma-separated list of layers to use in map. "
 		"If not used, layer list is automatically detected from mapfile [optional]",
 		dest="layers", action='store', type="string")
 
-	parser.add_option("-c", "--connection", help="string to override 'CONNECTION' parameter of all layers [optional]",
+	parser.add_option("-c", "--connection", help="string to override 'CONNECTION' parameter "
+		"of all layers. "
+		"Format: 'user=<username> password=<password> dbname=<database> host=<host>' [optional]",
 		dest="connection", action='store', type="string")
 
 	parser.add_option("--rdata", help="regular expression pattern and replacement string to override "
-			"'DATA' parameter of all layers. Example: --rdata 'FROM (.)*\.' 'FROM myschema.' will "
-			"replace any database schema to 'myschema' [optional]",
+		"'DATA' parameter of all layers. "
+		"Example: --rdata 'FROM (.)*\.' 'FROM myschema.' will replace any database "
+		"schema to 'myschema' [optional]",
 		dest="rdata", action='store', type="string", nargs=2)
 
 	parser.add_option("-s", "--scales", help="comma-separated list of scales to use in map [optional]",
