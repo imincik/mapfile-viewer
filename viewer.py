@@ -300,7 +300,7 @@ def server(environ, start_response):
 			headers = [('Content-type','image/png')]
 
 		start_response('200 OK', headers)
-		return open('/'.join(i for i in req[1:]), 'rb').read()
+		return open(os.path.join(os.path.dirname(__file__), '/'.join(i for i in req[1:])), 'rb').read()
 
 
 	# return map image
