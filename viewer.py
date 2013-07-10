@@ -398,7 +398,7 @@ if __name__ == "__main__":
 		dest="rdata", action='store', type="string", nargs=2)
 
 	parser.add_option("-s", "--scales", help="comma-separated list of scales to use in map [optional]",
-		dest="scales", action='store', type="string", default="10000,5000,2000,1000,500")
+		dest="scales", action='store', type="string", default="100000,50000,25000,10000,5000,2000,1000,500")
 
 	parser.add_option("-p", "--port", help="port to run server on [optional]",
 		dest="port", action='store', type="int", default=9991)
