@@ -393,7 +393,7 @@ if __name__ == "__main__":
 
 	parser.add_option("--rdata", help="regular expression pattern and replacement string to override "
 		"'DATA' parameter of all layers. "
-		"Example: --rdata 'FROM (.)*\.' 'FROM myschema.' will replace any database "
+		"Example: --rdata \"FROM (.)*\.\" \"FROM myschema.\" will replace any database "
 		"schema to 'myschema' [optional]",
 		dest="rdata", action='store', type="string", nargs=2)
 
